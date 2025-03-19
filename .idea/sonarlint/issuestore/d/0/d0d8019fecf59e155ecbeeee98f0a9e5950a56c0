@@ -1,0 +1,6 @@
+
+a	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(¾ıËO8ôíÑ„Ô2
+p
+java:S1128"NRemove this unused import 'com.pos_system.itp.dto.request.CustomerRequestDto'.(šûµ‚ıÿÿÿÿ8¼õõ…Ô2
+\
+java:S1128"?Remove this unused import 'com.pos_system.itp.entity.Customer'.(“æ«’8¼õõ…Ô2
