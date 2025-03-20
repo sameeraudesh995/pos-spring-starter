@@ -15,6 +15,7 @@ import com.pos_system.itp.repository.OrderRepository;
 import com.pos_system.itp.repository.ProductRepo;
 import com.pos_system.itp.service.OrderService;
 import lombok.AllArgsConstructor;
+import org.hibernate.cache.spi.support.AbstractReadWriteAccess;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -40,11 +42,39 @@ public class OrderServiceImpl implements OrderService {
         if(dtoList == null){
             throw new RuntimeException("data was not found!");
         }
-        Order order = Order.builder()
+        Order createdOrder = Order.builder()
                 .orderId(UUID.randomUUID().toString())
                 .date(new Date())
                 .customer(dtoList.getCustomer())
                 .build();
+
+        orderRepository.save(createdOrder);
+
+        for(OrderItem dto : dtoList.getItems()){
+            Optional<Order> selectedOrder = orderRepository.findById(createdOrder.getOrderId());
+            if(selectedOrder.isEmpty()){
+                throw new RuntimeException("Order not found!");
+            }
+            Order selectedPlacedOrder = Order.builder()
+                    .orderId(selectedOrder.get().getOrderId())
+                    .date(selectedOrder.get().getDate())
+                    .customer(selectedOrder.get().getCustomer())
+                    .build();
+
+            OrderItem selectedOrderItem = OrderItem.builder()
+                    .orderItemId(UUID.randomUUID().toString())
+                    .description(dto.getDescription())
+                    .order(selectedPlacedOrder)
+                    .netTotal(dto.getNetTotal())
+                    .qty(dto.getQty())
+                    .product(dto.getProduct())
+                    .build();
+            orderItemRepository.save(selectedOrderItem);
+
+
+        }
+
+
     }
 
     @Override

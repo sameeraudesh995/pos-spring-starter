@@ -10,9 +10,10 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class OrderItem {
     @Id
-    private Long orderItemId; // Changed to Long
+    private String orderItemId;
 
     @Column(name = "qty", nullable = false, length = 225 )
     private int qty;
